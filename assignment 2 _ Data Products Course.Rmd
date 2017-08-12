@@ -1,0 +1,58 @@
+---
+title: "Assignment 2 - Data Products Course"
+author: "jbassard"
+date: "August 12 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Synopsis
+This is the second project assignment for the Developping Data Products course in Coursera's Data Science specialization track. **The purpose of this project is to create an interactive plot with plotly R package.** I will create an interactive plot with the data of the artisanal companies in France (numbers, sales revenue, net added value) per department. Original Data is downloaded from data.gouv.fr.
+
+
+### Checking for required packages and install them if necessary, then load them
+```{r}
+if (!require("plotly")) {
+	 install.packages("plotly")}
+if (!require("readxl")) {
+	 install.packages("readxl")}
+library(plotly)
+library(readxl)
+```
+
+## Loading data
+### Downloading data in DataProduct folder
+```{r, eval=FALSE}
+if(!file.exists("./DataProduct2")) {
+	dir.create("./DataProduct2")}
+if(!file.exists("./DataProduct2/artisans_etalab.xls")) {
+	fileUrl1 <- "https://www.data.gouv.fr/storage/f/2014-01-13T18-09-10/artisans_etalab.xls"
+	download.file(fileUrl1, destfile="./DataProduct2/artisans_etalab.xls")}
+```
+
+### Loading the data
+```{r}
+Artisan <- read_xls("./DataProduct2/artisans_etalab.xls")
+```
+
+## Quick Exploration of the dataset
+```{r}
+dim(Artisan)
+head(Artisan)
+str(Artisan)
+```
+
+## The interactive plot
+
+```{r}
+plot_ly(data = Artisan) %>%
+  add_trace(x = ~Departement, y = ~entreprises_artisanales, type = "bar", color = I("green"), name = "Artisanal Company Numbers") %>%
+  add_trace(x = ~Departement, y = ~chiffre_affaires, yaxis = "y2", type = "bar", color = I("blue"), name = "Sales Revenue in Euros") %>%
+  add_trace(x = ~Departement, y = ~Valeur_ajoutee, yaxis = "y2", type = "bar", color = I("purple"), name = "Net Added Value in Euros") %>%
+  layout(title = "the artisanal companies in France per department", yaxis2 = list(overlaying = "y2", side = "right"), yaxis = list(title = FALSE), xaxis = list(title = FALSE))
+
+```
+```
